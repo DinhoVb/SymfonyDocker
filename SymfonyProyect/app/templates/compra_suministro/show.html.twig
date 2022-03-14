@@ -1,0 +1,121 @@
+{% extends 'dashboard.html.twig' %}
+
+{% block title %}Mis Compras{% endblock %}
+
+{% block body %}
+    <style>
+        .example-wrapper {
+            margin: 1em auto;
+            max-width: 800px;
+            width: 95%;
+            font: 18px/1.5 Dubai Light;
+        }
+
+        .example-wrapper code {
+            background: #F5F5F5;
+            padding: 2px 6px;
+        }
+    </style>
+
+
+    <div class="pt30 pb30 example-wrapper">
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h3 class="page-title">
+                    Detalle de la compra
+                </h3>
+
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+
+                            <div class="form-group row">
+                                <div class="col-md-6 text-center">
+                                    <label class="form-control-label" for="nombre"><strong>Cliente</strong></label>
+                                    <p>{{ idCompra.usuario.id }}</p>
+                                </div>
+                                <div class="col-md-6 text-center">
+                                    <label class="form-control-label" for="num_compra"><strong>Id de la
+                                            Compra</strong></label>
+                                    <p>{{ idCompra.id }}</p>
+                                </div>
+                            </div>
+                            <br /><br />
+                            <div class="form-group row ">
+                                <h4 class="card-title ml-3">Detalles de la compra</h4>
+                                <div class="table-responsive col-md-12">
+                                    <table id="detalles" class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Precio (COP)</th>
+                                            <th>Cantidad</th>
+                                            <th>SubTotal (COP)</th>
+                                        </tr>
+                                        </thead>
+                                        <tfoot>
+                                        <tr>
+                                            <th colspan="3">
+                                                <p align="right">SUBTOTAL:</p>
+                                            </th>
+                                            <th>
+                                                <p align="right">
+                                                    {{ idCompra.totalcompra - idCompra.totalimpuesto }}
+                                                </p>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3">
+                                                <p align="right">TOTAL IMPUESTO:</p>
+                                            </th>
+                                            <th>
+                                                <p align="right">
+                                                    {{ idCompra.totalimpuesto }}</p>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3">
+                                                <p align="right">TOTAL:</p>
+                                            </th>
+                                            <th>
+                                                <p align="right">{{ idCompra.totalcompra }}
+                                                </p>
+                                            </th>
+                                        </tr>
+
+                                        </tfoot>
+                                        <tbody>
+
+                                        {% for detalle in detalles %}
+                                        <tr>
+                                            <td>{{ detalle.producto.nombre }}</td>
+                                            <td> {{ detalle.preciocompra }}</td>
+                                            <td>{{ detalle.cantidad }}</td>
+                                            <td>{{ detalle.subtotal }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
+                        <div class="card-footer text-muted">
+                            <a href="{{ path('list_compra_suministro') }}" class="btn btn-warning float-right"><i
+                                        class="fa fa-reply"></i>Regresar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+

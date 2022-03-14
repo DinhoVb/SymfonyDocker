@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Productos{% endblock %}
+
+{% block body %}
+    <style>
+        .example-wrapper {
+            margin: 1em auto;
+            max-width: 800px;
+            width: 95%;
+            font: 18px/1.5 Dubai Light;
+        }
+
+        .example-wrapper code {
+            background: #F5F5F5;
+            padding: 2px 6px;
+        }
+    </style>
+
+
+    <div class="pt30 pb30 example-wrapper">
+            <div class="content-wrapper">
+                {% for message in app.flashes('producto_exito') %}
+                    <div class="alert alert-success bg-success text-white" role="alert">
+                        <strong>{{ message }}</strong>
+                    </div>
+                {% endfor %}
+                <div class="page-header mt-4 mb-4">
+                    <h3 class="page-title">
+                        Lista de los todos los producto
+                    </h3>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="form-group row">
+                                    <table class="table table-success table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Id</th>
+                                            <th scope="col">Nombre</th>
+                                            <th scope="col">Precio Unitario</th>
+                                            <th scope="col">Stock</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for producto in productos %}
+                                            <tr>
+                                                <th scope="row">{{producto.id}}</th>
+                                                <td>{{producto.nombre}}</td>
+                                                <td>{{producto.preciounitario}}</td>
+                                                <td>{{producto.stock}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="card-footer text-muted">
+                                <a href="{{ path('app_producto') }}" class="btn btn-success float-right"><strong class="mr-2">
+                                        Regresar
+                                    </strong><i class="text-dark fa fa-reply"></i></a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
+
+

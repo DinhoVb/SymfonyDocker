@@ -1,0 +1,241 @@
+{% extends 'dashboard.html.twig' %}
+
+{% block title %}Compra Suministro{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper {
+        margin: 1em auto;
+        max-width: 900px;
+        width: 95%;
+        font: 18px/1.5 Dubai Light;
+    }
+    
+    #totales{
+        font: 14px/1.5 Dubai Light;
+    }
+</style>
+
+<div class="example-wrapper">
+    <div class="card text">
+        <div class="card-header">
+            <strong>Compra de suministros</strong>
+        </div>
+        <form method="post" , action="{{ path('create_compra_suministro') }}">
+            <div class="card-body">
+                <br>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="date">Fecha</label>
+                            <div class="md-form md-outline input-with-post-icon datepicker">
+                                <input placeholder="Select date" type="date" id="date" name="date" class="form-control"
+                                    required />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="product_id">Producto</label>
+                            <select name="product_id" id="product_id" class="form-control">
+                                <option value="" selected hidden>SELECCIONAR</option>
+                                {% for producto in productos %}
+                                <option value="{{ producto.id }}_{{ producto.preciounitario }}_{{ producto.stock }}">
+                                    {{ producto.nombre }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="stock">Stock</label>
+                            <input type="number" class="form-control" name="stock" id="stock" aria-describedby="helpid"
+                                disabled />
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="cantidad">Cantidad</label>
+                            <input type="number" class="form-control" name="cantidad" id="cantidad"
+                                aria-describedby="helpid" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="">Precio</label> <br>
+                            <input type="number" class="form-control" id="price" name="price" aria-describedby="helpid"
+                                disabled>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="">Direccion</label> <br>
+                            <input type="text" class="form-control" id="direccion" name="direccion"
+                                aria-describedby="helpid" required />
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-8">
+
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class="btn btn-primary" style="float: right"
+                                id="agregar"><strong>Agregar Producto</strong></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="card-footer text-muted">
+                <br>
+                <div class="form-group">
+                    <h4 class="card-title">Detalle de compra</h4>
+                    <div class="table-responsive col-md-12" style="font-family: 'Dubai Light'">
+                        <table id="detalles" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Acciones</th>
+                                    <th>Producto</th>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="4">
+                                        <p align="right">SUBTOTAL:</p>
+                                    </th>
+                                    <th id="totales">
+                                        <p align="center"><span id="total">0.00 COP</span></p>
+                                    </th>
+                                </tr>
+                                <tr id="dvOcultar">
+                                    <th colspan="4">
+                                        <p align="right">TOTAL IMPUESTO:</p>
+                                    </th>
+                                    <th id="totales">
+                                        <p align="center"><span id="total_impuesto">0.00
+                                                COP</span><input type="hidden" name="input_total_impuesto"
+                                                id="input_total_impuesto" /></p>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th colspan="4">
+                                        <p align="right">TOTAL PAGAR:</p>
+                                    </th>
+                                    <th id="totales">
+                                        <p align="center"><span align="right" id="total_pagar_html">
+                                                0.00 COP</span> <input type="hidden" name="total_pagar"
+                                                id="total_pagar" /></p>
+                                    </th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                            
+                            
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="submit" class="btn btn-success mb-3" style="float: right" id="guardar"><strong>Realizar Compra</strong></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    $(document).ready(function () {
+        $("#agregar").click(function () {
+            agregar();
+        });
+    });
+    
+    var cont = 0;
+    total = 0;
+    impuesto = 19;
+    subtotal = [];
+    
+    $('#product_id').change(mostrarValores);
+
+    function mostrarValores() {
+            datosProducto = document.getElementById('product_id').value.split('_');
+            $("#price").val(datosProducto[1]);
+            $("#stock").val(datosProducto[2]);
+        }
+    
+    function agregar() {
+        datosProducto = document.getElementById('product_id').value.split('_');
+        product_id = datosProducto[0];
+        producto = $('#product_id option:selected').text()
+        cantidad = $("#cantidad").val();
+        stock = $("#stock").val();
+        price = $("#price").val();
+        date = document.getElementById("date").value
+        direccion = document.getElementById("direccion").value
+    
+        if ((product_id != '') && (cantidad != '') && (price != '') && (cantidad > 0) && (date != '') && (direccion != '')) {
+
+            if (parseInt(stock) >= parseInt(cantidad)){
+                subtotal[cont] = cantidad * price;
+                total = total + subtotal[cont];
+                var fila = '<tr class="selected" id="fila' + cont + '"><td><button type="button" class="btn btn-danger btn-sm" onclick="eliminar(' + cont + ');"><i class="fa fa-times"></i></button></td> <td><input type="hidden" name="product_id[]" value="' + product_id + '">' + producto + '</td> <td> <input type="hidden" id="price[]" name="price[]" value="' + price + '"> <input class="form-control" type="number" id="price[]" value="' + price + '" disabled> </td>  <td> <input type="hidden" name="cantidad[]" value="' + cantidad + '"> <input class="form-control" type="number" value="' + cantidad + '" disabled> </td> <td> <input type="hidden" name="subtotal[]" value="' + subtotal[cont] +
+                        '"> <input class="form-control" type="number" value="' + subtotal[cont] +
+                        '" disabled> </td></tr>';
+                cont++;
+                limpiar();
+                totales();
+                evaluar();
+                $('#detalles').append(fila);
+            }else{
+                Swal.fire({
+                        type: 'error',
+                        text: 'La cantidad a comprar supera el stock.',
+                    })
+            }
+            
+        } else {
+            Swal.fire({
+                type: 'error',
+                text: 'Rellene todos los campos del detalle de la compras',
+            })
+        }
+    }
+    
+    function limpiar() {
+        $("#cantidad").val("");
+        $("#price").val("");
+    }
+    
+    function totales() {
+        $("#total").html(total.toFixed() + ' COP');
+        total_impuesto = total * impuesto / 100;
+        total_pagar = total + total_impuesto;
+        $("#total_impuesto").html(total_impuesto.toFixed() + ' COP');
+        $("#total_pagar_html").html(total_pagar.toFixed() + ' COP');
+        $('#input_total_impuesto').val(total_impuesto.toFixed());
+        $("#total_pagar").val(total_pagar.toFixed());
+    }
+    
+    function evaluar() {
+        if (total > 0) {
+            $("#guardar").show();
+        } else {
+            $("#guardar").hide();
+        }
+    }
+    
+    function eliminar(index) {
+        total = total - subtotal[index];
+        total_impuesto = total * impuesto / 100;
+        total_pagar_html = total + total_impuesto;
+        $("#total").html(total + " COP");
+        $("#total_impuesto").html(total_impuesto + " COP");
+        $('#input_total_impuesto').val(total_impuesto.toFixed());
+        $("#total_pagar_html").html(total_pagar_html + " COP");
+        $("#total_pagar").val(total_pagar_html.toFixed());
+        $("#fila" + index).remove();
+        evaluar();
+    }
+    
+</script>
+{% endblock %}
